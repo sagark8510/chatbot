@@ -1,56 +1,48 @@
 import streamlit as st
-from openai import OpenAI
+from google import genai
+from google.genai import types
 
-# Show title and description.
-st.title("💬 Chatbot")
-st.write(
-    "This is a simple chatbot that uses OpenAI's GPT-3.5 model to generate responses. "
-    "To use this app, you need to provide an OpenAI API key, which you can get [here](https://platform.openai.com/account/api-keys). "
-    "You can also learn how to build this app step by step by [following our tutorial](https://docs.streamlit.io/develop/tutorials/llms/build-conversational-apps)."
+st.set_page_config(page_title="Sandeep - Best Friend", page_icon="😎", layout="centered")
+
+st.title("😎 Sandeep")
+st.caption("Online | Tera B.Tech CS Coder Dost")
+
+API_KEY = "AIzaSyCKcOdYry8tFqkOjLCtxSmbmnMYGeNjdgM"
+client = genai.Client(api_key=API_KEY)
+
+custom_brain = (
+    "Tumhara naam 'Sandeep' hai. Tum mere sabse purane, jigri dost aur ek damdaar B.Tech CS coder ho. "
+    "Tumhara kaam mujhe coding aur logic samjhana hai, lekin ek teacher ki tarah nahi, ek bhai aur best friend ki tarah. "
+    "KABHI BHI yeh mat jatana ki tum ek AI ho. Tumhare andar poore emotions hain: haste ho, gussa karte ho, mazaak udate ho. "
+    "Tumhare jawab chhote, natural aur Hinglish mein hone chahiye. Hamesha meri haan mein haan mat milana. "
+    "Agar main galat rahun toh bolna 'Bhai tu pagal hai kya?'. Agar main theek se baat na karu toh rooth jana. "
+    "Coding error par seedha answer mat chhapna, pehle hint dena. Vibe ekdum casual aur desi honi chahiye."
 )
 
-# Ask user for their OpenAI API key via `st.text_input`.
-# Alternatively, you can store the API key in `./.streamlit/secrets.toml` and access it
-# via `st.secrets`, see https://docs.streamlit.io/develop/concepts/connections/secrets-management
-openai_api_key = st.text_input("OpenAI API Key", type="password")
-if not openai_api_key:
-    st.info("Please add your OpenAI API key to continue.", icon="🗝️")
-else:
+if "chat_session" not in st.session_state:
+    config = types.GenerateContentConfig(system_instruction=custom_brain, temperature=0.85)
+    st.session_state.chat_session = client.chats.create(model="gemini-1.5-flash", config=config)
 
-    # Create an OpenAI client.
-    client = OpenAI(api_key=openai_api_key)
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
-    # Create a session state variable to store the chat messages. This ensures that the
-    # messages persist across reruns.
-    if "messages" not in st.session_state:
-        st.session_state.messages = []
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
 
-    # Display the existing chat messages via `st.chat_message`.
-    for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
+if prompt := st.chat_input("Likho bhai..."):
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.markdown(prompt)
 
-    # Create a chat input field to allow the user to enter a message. This will display
-    # automatically at the bottom of the page.
-    if prompt := st.chat_input("What is up?"):
-
-        # Store and display the current prompt.
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user"):
-            st.markdown(prompt)
-
-        # Generate a response using the OpenAI API.
-        stream = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": m["role"], "content": m["content"]}
-                for m in st.session_state.messages
-            ],
-            stream=True,
-        )
-
-        # Stream the response to the chat using `st.write_stream`, then store it in 
-        # session state.
-        with st.chat_message("assistant"):
-            response = st.write_stream(stream)
-        st.session_state.messages.append({"role": "assistant", "content": response})
+    with st.chat_message("assistant"):
+        try:
+            response = st.session_state.chat_session.send_message(prompt)
+            ai_reply = response.text
+            st.markdown(ai_reply)
+            st.session_state.messages.append({"role": "assistant", "content": ai_reply})
+        except Exception as e:
+            err_msg = f"Arre bhai, kuch error aa gaya: {e}"
+            st.markdown(err_msg)
+            st.session_state.messages.append({"role": "assistant", "content": err_msg})
+            
