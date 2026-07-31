@@ -8,7 +8,10 @@ st.title("😎 Sandeep")
 st.caption("Online | Tera B.Tech CS Coder Dost")
 
 API_KEY = "AIzaSyCKcOdYry8tFqkOjLCtxSmbmnMYGeNjdgM"
-client = genai.Client(api_key=API_KEY)
+
+# BUG FIX: Client ko bhi session_state mein save kar diya taaki woh band na ho
+if "client" not in st.session_state:
+    st.session_state.client = genai.Client(api_key=API_KEY)
 
 custom_brain = (
     "Tumhara naam 'Sandeep' hai. Tum mere sabse purane, jigri dost aur ek damdaar B.Tech CS coder ho. "
@@ -21,7 +24,7 @@ custom_brain = (
 
 if "chat_session" not in st.session_state:
     config = types.GenerateContentConfig(system_instruction=custom_brain, temperature=0.85)
-    st.session_state.chat_session = client.chats.create(model="gemini-1.5-flash", config=config)
+    st.session_state.chat_session = st.session_state.client.chats.create(model="gemini-1.5-flash", config=config)
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
