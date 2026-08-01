@@ -27,9 +27,9 @@ if "chat_session" not in st.session_state:
         system_instruction=custom_brain,
         temperature=0.85,
     )
-    # TERI LIST SE VERIFIED EXACT MODEL NAME
+    # YAHAN BASS LITE WALA MODEL DAAL DIYA (Free Tier ke liye)
     st.session_state.chat_session = st.session_state.client.chats.create(
-        model="gemini-2.0-flash",
+        model="gemini-2.0-flash-lite",
         config=config
     )
 
