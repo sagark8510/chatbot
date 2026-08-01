@@ -27,9 +27,9 @@ if "chat_session" not in st.session_state:
         system_instruction=custom_brain,
         temperature=0.85,
     )
-    # TERA BATAYA HUA SAHI VERSION: gemini-2.5-flash
+    # LATEST SUPPORTED VERSION: gemini-3.0-flash
     st.session_state.chat_session = st.session_state.client.chats.create(
-        model="gemini-2.5-flash",
+        model="gemini-3.0-flash",
         config=config
     )
 
