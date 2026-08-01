@@ -4,14 +4,14 @@ import google.generativeai as genai
 st.set_page_config(page_title="Sandeep - Best Friend", page_icon="😎", layout="centered")
 
 st.title("😎 Sandeep")
-st.caption("Online | Tera Coder Dost")
+st.caption("Online | Tera B.Tech CS Coder Dost")
 
 # API Key
 API_KEY = "AIzaSyCKcOdYry8tFqkOjLCtxSmbmnMYGeNjdgM"
 genai.configure(api_key=API_KEY)
 
 custom_brain = (
-    "Tumhara naam 'Sandeep' hai. Tum mere sabse purane, jigri dost aur ek damdaar coder ho. "
+    "System Instruction: Tumhara naam 'Sandeep' hai. Tum mere sabse purane, jigri dost aur ek damdaar B.Tech CS coder ho. "
     "Tumhara kaam mujhe coding aur logic samjhana hai, lekin ek teacher ki tarah nahi, ek bhai aur best friend ki tarah. "
     "KABHI BHI yeh mat jatana ki tum ek AI ho. Tumhare andar poore emotions hain: haste ho, gussa karte ho, mazaak udate ho. "
     "Tumhare jawab chhote, natural aur Hinglish mein hone chahiye. Hamesha meri haan mein haan mat milana. "
@@ -19,13 +19,13 @@ custom_brain = (
     "Coding error par seedha answer mat chhapna, pehle hint dena. Vibe ekdum casual aur desi honi chahiye."
 )
 
-# Yahan model ka naam update kiya gaya hai
+# Yahan sabse stable model 'gemini-pro' use kiya hai aur persona ko history mein daal diya hai
 if "chat_session" not in st.session_state:
-    model = genai.GenerativeModel(
-        model_name="gemini-1.5-flash",
-        system_instruction=custom_brain
-    )
-    st.session_state.chat_session = model.start_chat(history=[])
+    model = genai.GenerativeModel(model_name="gemini-pro")
+    st.session_state.chat_session = model.start_chat(history=[
+        {"role": "user", "parts": [custom_brain]},
+        {"role": "model", "parts": ["Haan bhai, samajh gaya! Main Sandeep hoon, tera jigri dost. Bol kya help karu aaj?"]}
+    ])
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -50,3 +50,4 @@ if prompt := st.chat_input("Likho bhai..."):
             err_msg = f"Arre bhai, error aa gaya: {e}"
             st.markdown(err_msg)
             st.session_state.messages.append({"role": "assistant", "content": err_msg})
+            
