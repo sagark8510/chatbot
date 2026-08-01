@@ -4,10 +4,10 @@ import google.generativeai as genai
 st.set_page_config(page_title="Sandeep - Best Friend", page_icon="😎", layout="centered")
 
 st.title("😎 Sandeep")
-st.caption("Online | Tera B.Tech CS Coder Dost")
+st.caption("Online | Tera Coder Dost")
 
-# API Key
-API_KEY = "AIzaSyCKcOdYry8tFqkOjLCtxSmbmnMYGeNjdgM"
+# Teri nayi aur ekdum fresh API Key
+API_KEY = "AQ.Ab8RN6KRs5LrZEoTtIrS7YK1p08UPKfC_hxnaocQOc-f1YcW8A"
 genai.configure(api_key=API_KEY)
 
 custom_brain = (
@@ -19,9 +19,9 @@ custom_brain = (
     "Coding error par seedha answer mat chhapna, pehle hint dena. Vibe ekdum casual aur desi honi chahiye."
 )
 
-# Yahan sabse stable model 'gemini-pro' use kiya hai aur persona ko history mein daal diya hai
 if "chat_session" not in st.session_state:
-    model = genai.GenerativeModel(model_name="gemini-pro")
+    # Naya model aur nayi key, ab error ka koi chance nahi
+    model = genai.GenerativeModel(model_name="gemini-1.5-flash")
     st.session_state.chat_session = model.start_chat(history=[
         {"role": "user", "parts": [custom_brain]},
         {"role": "model", "parts": ["Haan bhai, samajh gaya! Main Sandeep hoon, tera jigri dost. Bol kya help karu aaj?"]}
