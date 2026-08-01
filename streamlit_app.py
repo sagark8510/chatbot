@@ -19,10 +19,10 @@ custom_brain = (
     "Coding error par seedha answer mat chhapna, pehle hint dena. Vibe ekdum casual aur desi honi chahiye."
 )
 
-# Purana aur solid tareeqa (GenerativeModel) jisme gemini-1.5-pro model use kiya hai
+# Yahan model ka naam update kiya gaya hai
 if "chat_session" not in st.session_state:
     model = genai.GenerativeModel(
-        model_name="gemini-1.5-pro",
+        model_name="gemini-1.5-flash",
         system_instruction=custom_brain
     )
     st.session_state.chat_session = model.start_chat(history=[])
