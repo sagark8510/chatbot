@@ -50,4 +50,3 @@ if prompt := st.chat_input("Likho bhai..."):
             err_msg = f"Arre bhai, error aa gaya: {e}"
             st.markdown(err_msg)
             st.session_state.messages.append({"role": "assistant", "content": err_msg})
-            
