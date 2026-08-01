@@ -7,10 +7,9 @@ st.set_page_config(page_title="Sandeep - Best Friend", page_icon="😎", layout=
 st.title("😎 Sandeep")
 st.caption("Online | Tera Coder Dost")
 
-# Teri Nayi aur Latest API Key
-API_KEY = "AQ.Ab8RN6KRs5LrZEoTtIrS7YK1p08UPKfC_hxnaocQOc-f1YcW8A"
+# 👇 YAHAN JADOO HAI: Ab API key code mein nahi, Streamlit ke secret vault se aayegi 👇
+API_KEY = st.secrets["GEMINI_API_KEY"]
 
-# Client ko session_state mein save kar diya taaki close error na aaye
 if "client" not in st.session_state:
     st.session_state.client = genai.Client(api_key=API_KEY)
 
@@ -28,7 +27,6 @@ if "chat_session" not in st.session_state:
         system_instruction=custom_brain,
         temperature=0.85,
     )
-    # Latest SDK ke sath latest flash model
     st.session_state.chat_session = st.session_state.client.chats.create(
         model="gemini-1.5-flash",
         config=config
@@ -56,4 +54,4 @@ if prompt := st.chat_input("Likho bhai..."):
             err_msg = f"Arre bhai, kuch error aa gaya: {e}"
             st.markdown(err_msg)
             st.session_state.messages.append({"role": "assistant", "content": err_msg})
-    
+            
