@@ -27,9 +27,9 @@ if "chat_session" not in st.session_state:
         system_instruction=custom_brain,
         temperature=0.85,
     )
-    # YAHAN BASS LITE WALA MODEL DAAL DIYA (Free Tier ke liye)
+    # SOLUTION: Dynamic 'latest' alias use kiya jo automatically free tier wala model uthayega
     st.session_state.chat_session = st.session_state.client.chats.create(
-        model="gemini-2.0-flash-lite",
+        model="gemini-flash-latest",
         config=config
     )
 
