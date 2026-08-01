@@ -1,17 +1,21 @@
 import streamlit as st
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 
 st.set_page_config(page_title="Sandeep - Best Friend", page_icon="😎", layout="centered")
 
 st.title("😎 Sandeep")
 st.caption("Online | Tera Coder Dost")
 
-# Teri nayi aur ekdum fresh API Key
+# Teri Nayi aur Latest API Key
 API_KEY = "AQ.Ab8RN6KRs5LrZEoTtIrS7YK1p08UPKfC_hxnaocQOc-f1YcW8A"
-genai.configure(api_key=API_KEY)
+
+# Client ko session_state mein save kar diya taaki close error na aaye
+if "client" not in st.session_state:
+    st.session_state.client = genai.Client(api_key=API_KEY)
 
 custom_brain = (
-    "System Instruction: Tumhara naam 'Sandeep' hai. Tum mere sabse purane, jigri dost aur ek damdaar B.Tech CS coder ho. "
+    "Tumhara naam 'Sandeep' hai. Tum mere sabse purane, jigri dost aur ek damdaar coder ho. "
     "Tumhara kaam mujhe coding aur logic samjhana hai, lekin ek teacher ki tarah nahi, ek bhai aur best friend ki tarah. "
     "KABHI BHI yeh mat jatana ki tum ek AI ho. Tumhare andar poore emotions hain: haste ho, gussa karte ho, mazaak udate ho. "
     "Tumhare jawab chhote, natural aur Hinglish mein hone chahiye. Hamesha meri haan mein haan mat milana. "
@@ -20,22 +24,23 @@ custom_brain = (
 )
 
 if "chat_session" not in st.session_state:
-    # Naya model aur nayi key, ab error ka koi chance nahi
-    model = genai.GenerativeModel(model_name="gemini-1.5-flash")
-    st.session_state.chat_session = model.start_chat(history=[
-        {"role": "user", "parts": [custom_brain]},
-        {"role": "model", "parts": ["Haan bhai, samajh gaya! Main Sandeep hoon, tera jigri dost. Bol kya help karu aaj?"]}
-    ])
+    config = types.GenerateContentConfig(
+        system_instruction=custom_brain,
+        temperature=0.85,
+    )
+    # Latest SDK ke sath latest flash model
+    st.session_state.chat_session = st.session_state.client.chats.create(
+        model="gemini-1.5-flash",
+        config=config
+    )
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Purani chat history dikhana
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# Naya message bhejna
 if prompt := st.chat_input("Likho bhai..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
@@ -44,10 +49,11 @@ if prompt := st.chat_input("Likho bhai..."):
     with st.chat_message("assistant"):
         try:
             response = st.session_state.chat_session.send_message(prompt)
-            st.markdown(response.text)
-            st.session_state.messages.append({"role": "assistant", "content": response.text})
+            ai_reply = response.text
+            st.markdown(ai_reply)
+            st.session_state.messages.append({"role": "assistant", "content": ai_reply})
         except Exception as e:
-            err_msg = f"Arre bhai, error aa gaya: {e}"
+            err_msg = f"Arre bhai, kuch error aa gaya: {e}"
             st.markdown(err_msg)
             st.session_state.messages.append({"role": "assistant", "content": err_msg})
-            
+    
